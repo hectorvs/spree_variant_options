@@ -174,8 +174,12 @@ function VariantOptions(params) {
 
   function toggle() {
     if (variant) {
-      $('#variant_id, form[data-form-type="variant"] input[name$="[variant_id]"]').val(variant.id);
-      $('#product-price .price').removeClass('unselected').text(variant.price);
+      $('#variant_id, form[data-form-type="variant"] input[name$="[variant_id]"]').val(variant.id).change();
+      // $('#product-price .price').removeClass('unselected').text(variant.price);
+
+      update_price_from_variants( variant.price );
+      $('#product-price .price').removeClass('unselected');
+
       if (variant.count > 0 || allow_backorders)
         $('#cart-form button[type=submit]').attr('disabled', false).fadeTo(100, 1);
       $('form[data-form-type="variant"] button[type=submit]').attr('disabled', false).fadeTo(100, 1);
@@ -185,13 +189,15 @@ function VariantOptions(params) {
         // depends on modified version of product.js
       }
     } else {
-      $('#variant_id, form[data-form-type="variant"] input[name$="[variant_id]"]').val('');
+      $('#variant_id, form[data-form-type="variant"] input[name$="[variant_id]"]').val('').change();
       $('#cart-form button[type=submit], form[data-form-type="variant"] button[type=submit]').attr('disabled', true).fadeTo(0, 0.5);
       price = $('#product-price .price').addClass('unselected')
       // Replace product price by "(select)" only when there are at least 1 variant not out-of-stock
       variants = $("div.variant-options.index-0")
-      if (variants.find("a.option-value.out-of-stock").length != variants.find("a.option-value").length)
-        price.text('(select)');
+      if (variants.find("a.option-value.out-of-stock").length != variants.find("a.option-value").length) {
+        // price.text('(select)');
+        update_price_from_variants();
+      }
     }
   }
 
